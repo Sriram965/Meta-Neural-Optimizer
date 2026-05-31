@@ -48,26 +48,25 @@ def run_inner_loop(task, opt_net, K: int, theta_init=None):
 
         # stop gradient on the inner gradient
         grad = tf.stop_gradient(grad)
+        
 
         # record the loss BEFORE this step's update 
         losses.append(task_loss)
 
-        # --- Step 4: update running states and build features ---
+        # update running states and build features
         momentum_states = update_momentum(grad, momentum_states)
         rms_states      = update_rms(grad, rms_states)
         features        = compute_features(
             grad, momentum_states, rms_states, step, K
-        )   # [n_params, N_FEATURES]
+        ) 
 
-        # --- Step 5: optimizer network forward pass ---
+        # optimizer network forward pass
         # THIS is the operation the outer tape is tracking.
         # update depends on opt_net's weights phi, so the outer tape
         # can differentiate meta_loss all the way back to phi through here.
-        update = opt_net(features)   # [n_params]
+        update = opt_net(features)   
 
-        # --- Step 6: apply the update ---
-        # Simple addition — no momentum, no learning rate.
-        # The MLP has learned to produce the right update directly.
+        # apply the update 
         theta = theta + update
 
     return losses, theta
