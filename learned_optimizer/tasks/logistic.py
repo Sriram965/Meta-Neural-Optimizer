@@ -17,12 +17,10 @@ class LogisticRegressionTask(BaseTask):
         rng = np.random.default_rng(seed)
 
         # Creating a random "true" weight vector that defines the real boundary
-        w_true = rng.standard_normal(input_dim).astype(np.float32)
-
-        # Generating  random input features
-        X = rng.standard_normal((n_samples, input_dim)).astype(np.float32)
-
-        y = (X @ w_true > 0).astype(np.float32)
+        w_true = rng.standard_normal(input_dim)         
+        X = rng.standard_normal((n_samples, input_dim)) 
+        y = (X @ w_true > 0).astype(np.float32)        
+        X = X.astype(np.float32)                       
 
         # Store as TF constants — fixed data, never needs a gradient
         self.X = tf.constant(X)

@@ -9,8 +9,8 @@ MOMENTUM_BETAS = (0.9, 0.99, 0.999)
 RMS_BETAS = (0.9, 0.99)
 
 # Total number of features per parameter:
-# 2 (log|g|, sign(g)) + 3 (momentum) + 2 (rms) + 1 (timestep) = 8
-N_FEATURES = 2 + len(MOMENTUM_BETAS) + len(RMS_BETAS) + 1
+# 2 (log|g|, sign(g)) + 2 *  3 (momentum) + 2 (rms) + 1 (timestep) = 8
+N_FEATURES = 2 + 2 * len(MOMENTUM_BETAS) + len(RMS_BETAS) + 1
 
 
 def init_states(n_params: int):
@@ -48,7 +48,11 @@ def compute_features(grad, momentum_states, rms_states, step: int, total_steps: 
     sign_g    = tf.sign(grad)                    
 
 
-    m_feats = [momentum_states[b] for b in MOMENTUM_BETAS]
+    m_feats = []
+    for b in MOMENTUM_BETAS:
+        m = momentum_states[b]
+        m_feats.append(tf.math.log(tf.abs(m) + 1e-8)) 
+        m_feats.append(tf.sign(m))                     
 
     v_feats = [tf.math.log(rms_states[b] + 1e-8) for b in RMS_BETAS]
 

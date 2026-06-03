@@ -41,6 +41,7 @@ class MLPOptimizer(tf.keras.Model):
     def call(self, features: tf.Tensor) -> tf.Tensor:
         """
         Forward pass through the optimizer network.
+    
         """
         x = features              
 
@@ -49,7 +50,6 @@ class MLPOptimizer(tf.keras.Model):
 
         x = self.output_layer(x)           
 
-        # Squeeze the last dimension and scale down the output
         updates = tf.squeeze(x, axis=-1) * self.output_scale 
 
         return updates

@@ -13,8 +13,9 @@ class QuadraticTask(BaseTask):
         rng = np.random.default_rng(seed)
 
         # building a positive definite matrix via R^T R
-        R = rng.standard_normal((dim, dim)).astype(np.float32)
-        A = R.T @ R + 0.1 * np.eye(dim, dtype=np.float32)
+        R = rng.standard_normal((dim, dim))
+        A = R.T @ R + 0.1 * np.eye(dim)
+        A = A.astype(np.float32)             
 
         # rescaling  eigenvalues to control difficulty
         if condition_number > 1.0:
@@ -53,7 +54,7 @@ class NoisyQuadraticTask(QuadraticTask):
     def loss(self, theta: tf.Tensor) -> tf.Tensor:
         base_loss = super().loss(theta)
 
-        # Adding  Gaussian noise — different every call, simulating mini-batch variance
+        # Adding  Gaussian noise
         noise = tf.random.normal([], stddev=self.noise_std)
 
         return base_loss + noise

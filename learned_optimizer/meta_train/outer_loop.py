@@ -100,7 +100,6 @@ class MetaTrainer:
     ) -> dict:
         """
         Run the full meta-training loop for n_meta_steps iterations.
-        
         """
         os.makedirs(checkpoint_dir, exist_ok=True)
         history = {"step": [], "meta_loss": [], "grad_norm": []}
@@ -135,7 +134,7 @@ class MetaTrainer:
 
             # Save a checkpoint periodically so we don't lose progress if training is interrupted
             if step > 0 and step % checkpoint_every == 0:
-                path = os.path.join(checkpoint_dir, f"opt_net_step_{step}")
+                path = os.path.join(checkpoint_dir, f"opt_net_step_{step}.weights.h5")
                 self.opt_net.save_weights(path)
                 print(f"  checkpoint saved → {path}")
 
