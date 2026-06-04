@@ -8,22 +8,18 @@ class QuadraticTask(BaseTask):
 
     def __init__(self, dim: int = 10, condition_number: float = 1.0, seed: int = None):
         self._dim = dim
-
-        # Use a seeded random generator so tasks are reproducible
+        self.condition_number = condition_number
         rng = np.random.default_rng(seed)
 
-        # building a positive definite matrix via R^T R
-        R = rng.standard_normal((dim, dim))
-        A = R.T @ R + 0.1 * np.eye(dim)
-        A = A.astype(np.float32)             
+        R = rng.standard_normal((dim, dim)).astype(np.float64)
+        A = R.T @ R + 0.1 * np.eye(dim, dtype=np.float64)
 
-        # rescaling  eigenvalues to control difficulty
         if condition_number > 1.0:
             eigvals, eigvecs = np.linalg.eigh(A)
-            new_eigvals = np.linspace(1.0, condition_number, dim).astype(np.float32)
+            new_eigvals = np.linspace(1.0, condition_number, dim, dtype=np.float64)
             A = (eigvecs * new_eigvals) @ eigvecs.T
 
-        self.A = tf.constant(A, dtype=tf.float32)
+        self.A = tf.constant(A.astype(np.float32), dtype=tf.float32)
 
     def sample_theta(self) -> tf.Tensor:
 
@@ -37,6 +33,10 @@ class QuadraticTask(BaseTask):
     @property
     def dim(self) -> int:
         return self._dim
+    
+    @property
+    def name(self) -> str:
+        return f"Quadratic(dim={self._dim}, cond={self.condition_number})"
     
 
 class NoisyQuadraticTask(QuadraticTask):
@@ -58,3 +58,7 @@ class NoisyQuadraticTask(QuadraticTask):
         noise = tf.random.normal([], stddev=self.noise_std)
 
         return base_loss + noise
+    
+    @property
+    def name(self) -> str:
+        return f"NoisyQuadratic(dim={self._dim}, std={self.noise_std})"

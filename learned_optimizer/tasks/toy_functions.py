@@ -35,3 +35,7 @@ class RosenbrockTask(BaseTask):
     @property
     def dim(self) -> int:
         return self._dim
+    
+    @property
+    def name(self) -> str:
+        return f"Rosenbrock(dim={self._dim})"

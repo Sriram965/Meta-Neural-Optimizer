@@ -16,3 +16,9 @@ class BaseTask(ABC):
     @abstractmethod
     def dim(self) -> int:
         pass
+    
+    @property
+    @abstractmethod
+    def name(self) -> str:
+        """Unique human-readable name for this task instance."""
+        pass

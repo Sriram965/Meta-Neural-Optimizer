@@ -9,22 +9,25 @@ class LogisticRegressionTask(BaseTask):
     """
 
     def __init__(self, n_samples: int = 200, input_dim: int = 20,
-                 batch_size: int = 32, seed: int = None):
+             batch_size: int = 32, seed: int = None):
         self._dim = input_dim
         self.batch_size = batch_size
         self.n_samples = n_samples
 
         rng = np.random.default_rng(seed)
 
-        # Creating a random "true" weight vector that defines the real boundary
-        w_true = rng.standard_normal(input_dim)         
-        X = rng.standard_normal((n_samples, input_dim)) 
-        y = (X @ w_true > 0).astype(np.float32)        
-        X = X.astype(np.float32)                       
+        # All computation in float64 to avoid overflow
+        w_true = rng.standard_normal(input_dim)          
+        X = rng.standard_normal((n_samples, input_dim))   
+        y = (X @ w_true > 0).astype(np.float32)         
 
-        # Store as TF constants — fixed data, never needs a gradient
-        self.X = tf.constant(X)
+        # Cast to float32 only when creating TF constants
+        self.X = tf.constant(X.astype(np.float32))
         self.y = tf.constant(y)
+
+    @property
+    def name(self) -> str:
+        return f"LogisticRegression(n={self.n_samples}, dim={self._dim})"
 
     def sample_theta(self) -> tf.Tensor:
         
