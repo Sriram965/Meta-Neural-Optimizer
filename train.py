@@ -142,7 +142,7 @@ def evaluate(opt_net, eval_tasks, n_steps: int = 200):
     """
     print("\n--- Evaluation ---")
     for task in eval_tasks:
-        task_name = type(task).__name__
+        task_name = task.name
 
         # Run the learned optimizer
         losses, _ = run_inner_loop(task, opt_net, K=n_steps)

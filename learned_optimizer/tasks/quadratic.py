@@ -11,16 +11,19 @@ class QuadraticTask(BaseTask):
         self.condition_number = condition_number
         rng = np.random.default_rng(seed)
 
-        R = rng.standard_normal((dim, dim)).astype(np.float64)
-        A = R.T @ R + 0.1 * np.eye(dim, dtype=np.float64)
+        R = rng.standard_normal((dim, dim))
+        R = R / (np.linalg.norm(R, 'fro') + 1e-8)  # normalizing  to prevent overflow
+        A = R.T @ R * dim + 0.1 * np.eye(dim, dtype=np.float64)
 
         if condition_number > 1.0:
             eigvals, eigvecs = np.linalg.eigh(A)
             new_eigvals = np.linspace(1.0, condition_number, dim, dtype=np.float64)
             A = (eigvecs * new_eigvals) @ eigvecs.T
 
+        # Single cast at the very end
         self.A = tf.constant(A.astype(np.float32), dtype=tf.float32)
 
+        
     def sample_theta(self) -> tf.Tensor:
 
         return tf.random.normal([self._dim], stddev=1.0)

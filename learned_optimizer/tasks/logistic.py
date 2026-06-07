@@ -30,7 +30,7 @@ class LogisticRegressionTask(BaseTask):
         return f"LogisticRegression(n={self.n_samples}, dim={self._dim})"
 
     def sample_theta(self) -> tf.Tensor:
-        
+
         return tf.random.normal([self._dim], stddev=0.01)
 
     def loss(self, theta: tf.Tensor) -> tf.Tensor:
@@ -46,7 +46,7 @@ class LogisticRegressionTask(BaseTask):
         # Compute predictions as raw logits (no sigmoid yet)
         logits = tf.linalg.matvec(X_batch, theta)   # [batch_size]
 
-        # Cross-entropy loss — TF handles the sigmoid internally for stability
+        # Cross-entropy loss 
         loss = tf.reduce_mean(
             tf.nn.sigmoid_cross_entropy_with_logits(y_batch, logits)
         )

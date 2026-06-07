@@ -114,8 +114,11 @@ class MetaTrainer:
             # Sampling a fresh task — new random parameters every step
             task = self.task_sampler()
 
-            # Run one meta-step
             meta_loss, grad_norm = self._single_meta_step(task)
+            
+            if tf.math.is_nan(meta_loss) or tf.math.is_inf(meta_loss):
+                print(f"  [step {step}] NaN detected — skipping")
+                continue
 
             # Logging
             if step % log_every == 0:

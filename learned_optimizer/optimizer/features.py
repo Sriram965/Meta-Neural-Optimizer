@@ -9,7 +9,7 @@ MOMENTUM_BETAS = (0.9, 0.99, 0.999)
 RMS_BETAS = (0.9, 0.99)
 
 # Total number of features per parameter:
-# 2 (log|g|, sign(g)) + 2 *  3 (momentum) + 2 (rms) + 1 (timestep) = 8
+# 2 (log|g|, sign(g)) + 2 *  3 (momentum) + 2 (rms) + 1 (timestep) = 11
 N_FEATURES = 2 + 2 * len(MOMENTUM_BETAS) + len(RMS_BETAS) + 1
 
 
@@ -39,7 +39,6 @@ def update_rms(grad, rms_states):
 def compute_features(grad, momentum_states, rms_states, step: int, total_steps: int):
     """
     Build the [n_params, N_FEATURES] input tensor for the MLP optimizer.
-    
     This is the function that packages everything the optimizer needs to see
     at each step into a clean, fixed-size feature vector per parameter.
     """
